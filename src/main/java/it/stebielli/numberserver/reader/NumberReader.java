@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class NumberReader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NumberLogger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumberReader.class);
 
     public static final String TERMINATION_INPUT = "terminate";
     private static final Pattern LOG_INPUT = Pattern.compile("^[\\d]{9}$");
@@ -31,6 +31,8 @@ public class NumberReader {
             doRead(reader);
         } catch (IOException e) {
             LOGGER.error("A problem occurred while reading", e);
+        } finally {
+            numberLogger.flush();
         }
     }
 

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +24,7 @@ public class NumberLogger implements Closeable {
         this.logFile = logFile;
         this.reporter = reporter;
         this.indexedNumbers = Collections.synchronizedSet(new HashSet<>());
-        this.fileWriter = newPrintStream();
+        this.fileWriter = newFileWriter();
     }
 
     public void log(int number) {
@@ -40,37 +38,39 @@ public class NumberLogger implements Closeable {
 
     private void print(int number) {
         try {
-            fileWriter.append(String.valueOf(number)).append(System.lineSeparator());
+            fileWriter.write(number + System.lineSeparator());
+        } catch (IOException e) {
+            LOGGER.error("A problem occurred writing to file " + logFile, e);
+        }
+    }
+
+    public void flush() {
+        try {
             fileWriter.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("A problem occurred flushing to file " + logFile, e);
         }
     }
 
     @Override
     public void close() {
         try {
+            fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
             LOGGER.error("A problem occurred closing the fileWriter", e);
         }
     }
 
-    private FileWriter newPrintStream() throws NumberLoggerInitializationException {
+    private FileWriter newFileWriter() throws NumberLoggerInitializationException {
         try {
-            Files.deleteIfExists(logFile());
             return new FileWriter(logFile, false);
         } catch (IOException e) {
             throw new NumberLoggerInitializationException("Error creating a new " + logFile, e);
         }
     }
 
-    private Path logFile() {
-        return Path.of(logFile);
-    }
-
     private boolean isNotIndexed(int number) {
         return indexedNumbers.add(number);
     }
-
 }

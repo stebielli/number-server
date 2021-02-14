@@ -14,7 +14,7 @@ public class NumberReporter implements Closeable {
     private final int periodInMillis;
     private final AtomicInteger uniquesNumbers;
     private final AtomicInteger duplicatesNumbers;
-    private int totals;
+    private int totalUniquesNumbers;
     private final ScheduledExecutorService service;
 
     public NumberReporter(int periodInMillis) {
@@ -22,7 +22,7 @@ public class NumberReporter implements Closeable {
         this.periodInMillis = periodInMillis;
         this.uniquesNumbers = new AtomicInteger(0);
         this.duplicatesNumbers = new AtomicInteger(0);
-        this.totals = 0;
+        this.totalUniquesNumbers = 0;
         this.service = ExecutorsUtils.newSingleThreadScheduledExecutor();
 
         startSchedule();
@@ -43,8 +43,8 @@ public class NumberReporter implements Closeable {
     public void print() {
         var uniques = uniquesNumbers.getAndSet(0);
         var duplicates = duplicatesNumbers.getAndSet(0);
-        totals = totals + uniques;
-        printStream.println(report(uniques, duplicates, totals));
+        totalUniquesNumbers = totalUniquesNumbers + uniques;
+        printStream.println(report(uniques, duplicates, totalUniquesNumbers));
         printStream.flush();
     }
 

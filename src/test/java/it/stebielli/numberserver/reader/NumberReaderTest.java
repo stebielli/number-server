@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import java.io.ByteArrayInputStream;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class NumberReaderTest extends MockitoTest {
 
@@ -30,6 +30,7 @@ class NumberReaderTest extends MockitoTest {
         reader.read(stream);
 
         verify(numberLogger).log(Integer.parseInt(VALID_INPUT));
+        verify(numberLogger).flush();
     }
 
     @Test
@@ -40,7 +41,9 @@ class NumberReaderTest extends MockitoTest {
 
         reader.read(stream);
 
-        verifyNoInteractions(numberLogger);
+        verify(numberLogger).flush();
+
+        verifyNoMoreInteractions(numberLogger);
     }
 
     @Test
@@ -52,6 +55,7 @@ class NumberReaderTest extends MockitoTest {
         reader.read(stream);
 
         verify(terminator).terminate();
+        verify(numberLogger).flush();
     }
 
 

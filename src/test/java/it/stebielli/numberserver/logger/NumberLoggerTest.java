@@ -53,10 +53,11 @@ class NumberLoggerTest extends MockitoTest {
 
         var logger = new NumberLogger(LOG_FILE, numberReporter);
 
+        logger.close();
+
         assertThat(Files.exists(numbersLog())).isTrue();
         assertThat(numbersLog().toFile().length()).isEqualTo(0);
 
-        logger.close();
     }
 
     @Test
@@ -64,12 +65,13 @@ class NumberLoggerTest extends MockitoTest {
         var logger = new NumberLogger(LOG_FILE, numberReporter);
 
         logger.log(NUMBER);
+        logger.flush();
+        logger.close();
 
         assertThat(Files.lines(numbersLog()).count()).isEqualTo(1);
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
         verify(numberReporter).incrementUniques();
 
-        logger.close();
     }
 
     @Test
@@ -78,13 +80,14 @@ class NumberLoggerTest extends MockitoTest {
 
         logger.log(NUMBER);
         logger.log(NUMBER);
+        logger.flush();
+        logger.close();
 
         assertThat(Files.lines(numbersLog()).count()).isEqualTo(1);
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
         verify(numberReporter).incrementUniques();
         verify(numberReporter).incrementDuplicates();
 
-        logger.close();
     }
 
     @Test
@@ -99,13 +102,15 @@ class NumberLoggerTest extends MockitoTest {
         future0.get();
         future1.get();
 
+        logger.flush();
+        logger.close();
+
         var writtenNumbers = Files.lines(numbersLog())
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
 
         assertThat(writtenNumbers).containsExactly(numbers.toArray(new Integer[numbers.size()]));
 
-        logger.close();
     }
 
     private Set<Integer> randomHundredNumbers() {
