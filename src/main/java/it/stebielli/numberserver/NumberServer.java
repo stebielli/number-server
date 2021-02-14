@@ -30,7 +30,10 @@ public class NumberServer implements Closeable {
 
     public void start() throws StartupException {
         serverSocket = newServerSocket(port);
-        socketHandler = new NumberSocketHandler(newNumberReaderFactory(), maxConnections);
+
+        var numberReaderFactory = new NumberReaderFactory(newNumberLogger(), terminationFunction());
+        socketHandler = new NumberSocketHandler(numberReaderFactory, maxConnections);
+
         socketService = new SocketService(serverSocket, socketHandler);
     }
 
@@ -38,19 +41,7 @@ public class NumberServer implements Closeable {
     public void close() {
         socketService.close();
         socketHandler.close();
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            LOGGER.warn("A problem occurred closing ServerSocket", e);
-        }
-    }
-
-    private NumberReaderFactory newNumberReaderFactory() throws StartupException {
-        try {
-            return new NumberReaderFactory(new NumberLogger(), this::close);
-        } catch (NumberLoggerInitializationException e) {
-            throw new StartupException(e);
-        }
+        closeServerSocket();
     }
 
     private ServerSocket newServerSocket(int port) throws StartupException {
@@ -58,6 +49,26 @@ public class NumberServer implements Closeable {
             return new ServerSocket(port);
         } catch (IOException e) {
             throw new StartupException(e);
+        }
+    }
+
+    private NumberLogger newNumberLogger() throws StartupException {
+        try {
+            return new NumberLogger();
+        } catch (NumberLoggerInitializationException e) {
+            throw new StartupException(e);
+        }
+    }
+
+    private NumberServerTerminator terminationFunction() {
+        return this::close;
+    }
+
+    private void closeServerSocket() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            LOGGER.warn("A problem occurred closing ServerSocket", e);
         }
     }
 
