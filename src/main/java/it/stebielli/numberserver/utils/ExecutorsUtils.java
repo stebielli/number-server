@@ -14,6 +14,10 @@ public class ExecutorsUtils {
         return Executors.newSingleThreadExecutor();
     }
 
+    public static ScheduledExecutorService newSingleThreadScheduledExecutor() {
+        return Executors.newSingleThreadScheduledExecutor();
+    }
+
     public static void shutdown(ExecutorService executorService) {
         executorService.shutdown();
         try {
