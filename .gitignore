@@ -1,0 +1,12 @@
+# Project specific
+numbers.log
+
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+out/
+.idea_modules/
