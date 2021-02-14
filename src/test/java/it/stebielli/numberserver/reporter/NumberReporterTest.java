@@ -26,6 +26,8 @@ class NumberReporterTest extends MockitoTest {
         var reporter = new NumberReporter(50);
 
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 0 duplicates. Unique total: 0");
+        verify(printStream, timeout(TIMEOUT)).flush();
+
         reporter.close();
 
         verifyNoMoreAsyncInteraction(printStream);
@@ -38,6 +40,7 @@ class NumberReporterTest extends MockitoTest {
         reporter.incrementUniques();
 
         verify(printStream, timeout(TIMEOUT)).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
+        verify(printStream, timeout(TIMEOUT)).flush();
 
         reporter.close();
     }
@@ -49,6 +52,7 @@ class NumberReporterTest extends MockitoTest {
         reporter.incrementDuplicates();
 
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 1 duplicates. Unique total: 0");
+        verify(printStream, timeout(TIMEOUT)).flush();
 
         reporter.close();
     }
