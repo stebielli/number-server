@@ -48,17 +48,16 @@ public class NumberLogger implements Closeable {
         try {
             fileWriter.flush();
         } catch (IOException e) {
-            LOGGER.error("A problem occurred flushing to file " + logFile, e);
+            LOGGER.warn("A problem occurred flushing to file " + logFile, e);
         }
     }
 
     @Override
     public void close() {
         try {
-            fileWriter.flush();
             fileWriter.close();
         } catch (IOException e) {
-            LOGGER.error("A problem occurred closing the fileWriter", e);
+            LOGGER.warn("A problem occurred closing the fileWriter", e);
         }
     }
 

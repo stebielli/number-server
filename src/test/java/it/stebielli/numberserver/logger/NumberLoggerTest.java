@@ -109,8 +109,7 @@ class NumberLoggerTest extends MockitoTest {
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
 
-        assertThat(writtenNumbers).containsExactly(numbers.toArray(new Integer[numbers.size()]));
-
+        assertThat(writtenNumbers).containsExactlyInAnyOrderElementsOf(numbers);
     }
 
     private Set<Integer> randomHundredNumbers() {
