@@ -57,7 +57,7 @@ public class NumberServer implements Closeable {
 
     private void startNumberLogger() throws StartupException {
         try {
-            this.numberLogger = new NumberLogger(logFile, numberReporter);
+            numberLogger = new NumberLogger(logFile, numberReporter);
         } catch (NumberLoggerInitializationException e) {
             throw new StartupException(e);
         }
