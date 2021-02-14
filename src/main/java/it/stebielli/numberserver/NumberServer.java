@@ -3,6 +3,7 @@ package it.stebielli.numberserver;
 import it.stebielli.numberserver.logger.NumberLogger;
 import it.stebielli.numberserver.logger.NumberLoggerInitializationException;
 import it.stebielli.numberserver.reader.NumberReaderFactory;
+import it.stebielli.numberserver.reporter.NumberReporter;
 import it.stebielli.numberserver.socketservice.NumberSocketHandler;
 import it.stebielli.numberserver.socketservice.SocketService;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class NumberServer implements Closeable {
     private ServerSocket serverSocket;
     private SocketService socketService;
     private NumberSocketHandler socketHandler;
+    private NumberReporter reporter;
 
     public NumberServer(int port, int maxConnections)  {
         this.port = port;
@@ -30,8 +32,8 @@ public class NumberServer implements Closeable {
 
     public void start() throws StartupException {
         serverSocket = newServerSocket(port);
-
-        var numberReaderFactory = new NumberReaderFactory(newNumberLogger(), terminationFunction());
+        reporter = new NumberReporter(System.out, 10_000);
+        var numberReaderFactory = new NumberReaderFactory(newNumberLogger(reporter), terminationFunction());
         socketHandler = new NumberSocketHandler(numberReaderFactory, maxConnections);
 
         socketService = new SocketService(serverSocket, socketHandler);
@@ -41,6 +43,7 @@ public class NumberServer implements Closeable {
     public void close() {
         socketService.close();
         socketHandler.close();
+        reporter.close();
         closeServerSocket();
     }
 
@@ -52,9 +55,9 @@ public class NumberServer implements Closeable {
         }
     }
 
-    private NumberLogger newNumberLogger() throws StartupException {
+    private NumberLogger newNumberLogger(NumberReporter reporter) throws StartupException {
         try {
-            return new NumberLogger();
+            return new NumberLogger(reporter);
         } catch (NumberLoggerInitializationException e) {
             throw new StartupException(e);
         }

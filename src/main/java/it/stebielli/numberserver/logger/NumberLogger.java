@@ -1,6 +1,8 @@
 package it.stebielli.numberserver.logger;
 
 
+import it.stebielli.numberserver.reporter.NumberReporter;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -16,8 +18,10 @@ public class NumberLogger {
     private final PrintStream printStream;
     private final Set<Integer> indexedNumbers;
     private final Lock lock;
+    private final NumberReporter reporter;
 
-    public NumberLogger() throws NumberLoggerInitializationException {
+    public NumberLogger(NumberReporter reporter) throws NumberLoggerInitializationException {
+        this.reporter = reporter;
         this.printStream = newPrintStream();
         this.indexedNumbers = new HashSet<>();
         this.lock = new ReentrantLock();
@@ -48,8 +52,13 @@ public class NumberLogger {
 
     private void logNonIndexed(int number) {
         if (!indexedNumbers.contains(number)) {
+
             printStream.println(number);
             indexedNumbers.add(number);
+
+            reporter.incrementUniques();
+        } else {
+            reporter.incrementDuplicates();
         }
     }
 

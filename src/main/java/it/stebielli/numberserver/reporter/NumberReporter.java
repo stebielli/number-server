@@ -2,12 +2,13 @@ package it.stebielli.numberserver.reporter;
 
 import it.stebielli.numberserver.utils.ExecutorsUtils;
 
+import java.io.Closeable;
 import java.io.PrintStream;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class NumberReporter {
+public class NumberReporter implements Closeable {
 
     private final PrintStream printStream;
     private final int periodInMillis;
@@ -23,6 +24,8 @@ public class NumberReporter {
         this.duplicatesNumbers = new AtomicInteger(0);
         this.totalUniquesNumbers = new AtomicInteger(0);
         this.service = ExecutorsUtils.newSingleThreadScheduledExecutor();
+
+        startSchedule();
     }
 
     public void incrementUniques() {
@@ -34,7 +37,7 @@ public class NumberReporter {
         duplicatesNumbers.incrementAndGet();
     }
 
-    public void start() {
+    private void startSchedule() {
         service.scheduleAtFixedRate(this::print, 0, periodInMillis, TimeUnit.MILLISECONDS);
     }
 
@@ -52,6 +55,7 @@ public class NumberReporter {
     }
 
 
+    @Override
     public void close() {
         ExecutorsUtils.shutdown(service);
     }

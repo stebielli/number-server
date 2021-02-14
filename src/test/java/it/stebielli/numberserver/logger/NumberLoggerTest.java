@@ -1,8 +1,11 @@
 package it.stebielli.numberserver.logger;
 
+import it.stebielli.numberserver.MockitoTest;
+import it.stebielli.numberserver.reporter.NumberReporter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,13 +18,18 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
-class NumberLoggerTest {
+class NumberLoggerTest extends MockitoTest {
 
     public static final int NUMBER = 0;
 
+    @Mock
+    NumberReporter numberReporter;
+
     @BeforeEach
-    void setUp() throws IOException {
+    public void setUp() throws Exception {
+        super.setUp();
         clearLogFile();
     }
 
@@ -42,7 +50,7 @@ class NumberLoggerTest {
     void constructorCreatesNewLogFile() throws IOException, NumberLoggerInitializationException {
         Files.writeString(numbersLog(), "something");
 
-        new NumberLogger();
+        new NumberLogger(numberReporter);
 
         assertThat(Files.exists(numbersLog())).isTrue();
         assertThat(numbersLog().toFile().length()).isEqualTo(0);
@@ -50,30 +58,33 @@ class NumberLoggerTest {
 
     @Test
     void logNumber() throws IOException, NumberLoggerInitializationException {
-        var logger = new NumberLogger();
+        var logger = new NumberLogger(numberReporter);
 
         logger.log(NUMBER);
 
         assertThat(Files.lines(numbersLog()).count()).isEqualTo(1);
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
+        verify(numberReporter).incrementUniques();
     }
 
     @Test
     void loggedNumbersAreUnique() throws NumberLoggerInitializationException, IOException {
-        var logger = new NumberLogger();
+        var logger = new NumberLogger(numberReporter);
 
         logger.log(NUMBER);
         logger.log(NUMBER);
 
         assertThat(Files.lines(numbersLog()).count()).isEqualTo(1);
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
+        verify(numberReporter).incrementUniques();
+        verify(numberReporter).incrementDuplicates();
     }
 
     @Test
     void logSameNumbersFromSeparateThreads() throws NumberLoggerInitializationException, ExecutionException, InterruptedException, IOException {
         var numbers = randomHundredNumbers();
 
-        var logger = new NumberLogger();
+        var logger = new NumberLogger(numberReporter);
 
         var future0 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));
         var future1 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));

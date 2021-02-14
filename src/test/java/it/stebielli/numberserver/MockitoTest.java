@@ -10,7 +10,7 @@ public class MockitoTest {
     protected static final int TIMEOUT = 100;
 
     @BeforeEach
-    protected void setUp() {
+    protected void setUp() throws Exception{
         MockitoAnnotations.openMocks(this);
     }
 

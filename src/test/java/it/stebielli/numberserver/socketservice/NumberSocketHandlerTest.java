@@ -25,7 +25,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     InputStream stream;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         when(readerFactory.newReader()).thenReturn(reader);
     }

@@ -17,7 +17,6 @@ class NumberReporterTest extends MockitoTest {
     void startAndCloseReporting() throws InterruptedException {
         var reporter = new NumberReporter(printStream, 50);
 
-        reporter.start();
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 0 duplicates. Unique total: 0");
         reporter.close();
 
@@ -28,7 +27,6 @@ class NumberReporterTest extends MockitoTest {
     void reportUniqueNumber() {
         var reporter = new NumberReporter(printStream, 50);
 
-        reporter.start();
         reporter.incrementUniques();
 
         verify(printStream, timeout(TIMEOUT)).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
@@ -40,7 +38,6 @@ class NumberReporterTest extends MockitoTest {
     void reportDuplicatedNumber() {
         var reporter = new NumberReporter(printStream, 50);
 
-        reporter.start();
         reporter.incrementDuplicates();
 
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 1 duplicates. Unique total: 0");
@@ -52,7 +49,6 @@ class NumberReporterTest extends MockitoTest {
     void resetReportPeriodically() throws InterruptedException {
         var reporter = new NumberReporter(printStream, 50);
 
-        reporter.start();
         reporter.incrementUniques();
 
         Thread.sleep(100);
