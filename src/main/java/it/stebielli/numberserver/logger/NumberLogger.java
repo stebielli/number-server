@@ -1,12 +1,13 @@
 package it.stebielli.numberserver.logger;
 
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class NumberLogger {
@@ -14,18 +15,23 @@ public class NumberLogger {
     public static final String LOG_FILE = "numbers.log";
     private final PrintStream printStream;
     private final Set<Integer> indexedNumbers;
-    private final ReentrantLock lock;
+    private final Lock lock;
 
     public NumberLogger() throws NumberLoggerInitializationException {
-        this.printStream = initializePrintStream();
-        this.indexedNumbers = Collections.synchronizedSet(new HashSet<>());
+        this.printStream = newPrintStream();
+        this.indexedNumbers = new HashSet<>();
         this.lock = new ReentrantLock();
     }
 
-    private PrintStream initializePrintStream() throws NumberLoggerInitializationException {
+    private PrintStream newPrintStream() throws NumberLoggerInitializationException {
+        OutputStream out = clearAndOpenStreamToFile();
+        return new PrintStream(out);
+    }
+
+    private OutputStream clearAndOpenStreamToFile() throws NumberLoggerInitializationException {
         try {
             Files.deleteIfExists(logFile());
-            return new PrintStream(Files.newOutputStream(logFile()));
+            return Files.newOutputStream(logFile());
         } catch (Exception e) {
             throw new NumberLoggerInitializationException("Error creating a new " + LOG_FILE, e);
         }
