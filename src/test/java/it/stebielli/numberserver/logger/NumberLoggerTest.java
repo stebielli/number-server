@@ -51,10 +51,12 @@ class NumberLoggerTest extends MockitoTest {
     void constructorCreatesNewLogFile() throws IOException, NumberLoggerInitializationException {
         Files.writeString(numbersLog(), "something");
 
-        new NumberLogger(LOG_FILE, numberReporter);
+        var logger = new NumberLogger(LOG_FILE, numberReporter);
 
         assertThat(Files.exists(numbersLog())).isTrue();
         assertThat(numbersLog().toFile().length()).isEqualTo(0);
+
+        logger.close();
     }
 
     @Test
@@ -66,6 +68,8 @@ class NumberLoggerTest extends MockitoTest {
         assertThat(Files.lines(numbersLog()).count()).isEqualTo(1);
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
         verify(numberReporter).incrementUniques();
+
+        logger.close();
     }
 
     @Test
@@ -79,6 +83,8 @@ class NumberLoggerTest extends MockitoTest {
         assertThat(Files.lines(numbersLog()).findFirst().get()).isEqualTo(String.valueOf(NUMBER));
         verify(numberReporter).incrementUniques();
         verify(numberReporter).incrementDuplicates();
+
+        logger.close();
     }
 
     @Test
@@ -98,6 +104,8 @@ class NumberLoggerTest extends MockitoTest {
                 .collect(Collectors.toList());
 
         assertThat(writtenNumbers).containsExactly(numbers.toArray(new Integer[numbers.size()]));
+
+        logger.close();
     }
 
     private Set<Integer> randomHundredNumbers() {
