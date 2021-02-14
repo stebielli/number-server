@@ -32,7 +32,6 @@ public class NumberReporter implements Closeable {
 
     public void incrementUniques() {
         uniquesNumbers.incrementAndGet();
-        totalUniquesNumbers.incrementAndGet();
     }
 
     public void incrementDuplicates() {
@@ -43,22 +42,22 @@ public class NumberReporter implements Closeable {
         service.scheduleAtFixedRate(this::print, NOW, periodInMillis, TimeUnit.MILLISECONDS);
     }
 
-
     public void print() {
-        printStream.println(report());
-        uniquesNumbers.set(0);
-        duplicatesNumbers.set(0);
+        var uniques = uniquesNumbers.getAndSet(0);
+        var duplicates = duplicatesNumbers.getAndSet(0);
+        var totalUniques = totalUniquesNumbers.addAndGet(uniques);
+        printStream.println(report(uniques, duplicates, totalUniques));
     }
 
-    private String report() {
-        return "Received " + uniquesNumbers.get()
-                + " unique numbers, " + duplicatesNumbers.get()
-                + " duplicates. Unique total: " + totalUniquesNumbers.get();
+    private String report(int uniques, int duplicates, int totalUniques) {
+        return "Received " + uniques
+                + " unique numbers, " + duplicates
+                + " duplicates. Unique total: " + totalUniques;
     }
-
 
     @Override
     public void close() {
         ExecutorsUtils.shutdown(service);
     }
+
 }

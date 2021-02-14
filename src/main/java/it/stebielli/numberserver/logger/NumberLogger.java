@@ -1,6 +1,5 @@
 package it.stebielli.numberserver.logger;
 
-
 import it.stebielli.numberserver.reporter.NumberReporter;
 
 import java.io.Closeable;
