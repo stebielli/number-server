@@ -1,6 +1,7 @@
 package it.stebielli.numberserver.reporter;
 
 import it.stebielli.numberserver.MockitoTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -13,9 +14,16 @@ class NumberReporterTest extends MockitoTest {
     @Mock
     PrintStream printStream;
 
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+        System.setOut(printStream);
+    }
+
     @Test
     void startAndCloseReporting() throws InterruptedException {
-        var reporter = new NumberReporter(printStream, 50);
+        var reporter = new NumberReporter(50);
 
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 0 duplicates. Unique total: 0");
         reporter.close();
@@ -25,7 +33,7 @@ class NumberReporterTest extends MockitoTest {
 
     @Test
     void reportUniqueNumber() {
-        var reporter = new NumberReporter(printStream, 50);
+        var reporter = new NumberReporter(50);
 
         reporter.incrementUniques();
 
@@ -36,7 +44,7 @@ class NumberReporterTest extends MockitoTest {
 
     @Test
     void reportDuplicatedNumber() {
-        var reporter = new NumberReporter(printStream, 50);
+        var reporter = new NumberReporter(50);
 
         reporter.incrementDuplicates();
 
@@ -47,7 +55,7 @@ class NumberReporterTest extends MockitoTest {
 
     @Test
     void resetReportPeriodically() throws InterruptedException {
-        var reporter = new NumberReporter(printStream, 50);
+        var reporter = new NumberReporter(50);
 
         reporter.incrementUniques();
 

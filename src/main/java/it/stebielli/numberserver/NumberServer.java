@@ -19,23 +19,60 @@ public class NumberServer implements Closeable {
 
     private final int maxConnections;
     private final int port;
+    private final String logFile;
+    private final int reportPeriod;
 
     private ServerSocket serverSocket;
     private SocketService socketService;
     private NumberSocketHandler socketHandler;
-    private NumberReporter reporter;
+    private NumberReporter numberReporter;
+    private NumberLogger numberLogger;
 
-    public NumberServer(int port, int maxConnections)  {
+    public NumberServer(int port, int maxConnections, String logFile, int reportPeriod) {
         this.port = port;
         this.maxConnections = maxConnections;
+        this.logFile = logFile;
+        this.reportPeriod = reportPeriod;
     }
 
     public void start() throws StartupException {
-        serverSocket = newServerSocket(port);
-        reporter = new NumberReporter(System.out, 10_000);
-        var numberReaderFactory = new NumberReaderFactory(newNumberLogger(reporter), terminationFunction());
-        socketHandler = new NumberSocketHandler(numberReaderFactory, maxConnections);
+        startServerSocket();
+        startNumberReporter();
+        startNumberLogger();
+        startSocketHandler();
+        startSocketService();
+    }
 
+    private void startServerSocket() throws StartupException {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            throw new StartupException(e);
+        }
+    }
+
+    private void startNumberReporter() {
+        numberReporter = new NumberReporter(reportPeriod);
+    }
+
+    private void startNumberLogger() throws StartupException {
+        try {
+            this.numberLogger = new NumberLogger(logFile, numberReporter);
+        } catch (NumberLoggerInitializationException e) {
+            throw new StartupException(e);
+        }
+    }
+
+    private void startSocketHandler() {
+        var readerFactory = new NumberReaderFactory(numberLogger, terminationFunction());
+        socketHandler = new NumberSocketHandler(readerFactory, maxConnections);
+    }
+
+    private NumberServerTerminator terminationFunction() {
+        return this::close;
+    }
+
+    private void startSocketService() {
         socketService = new SocketService(serverSocket, socketHandler);
     }
 
@@ -43,28 +80,9 @@ public class NumberServer implements Closeable {
     public void close() {
         socketService.close();
         socketHandler.close();
-        reporter.close();
+        numberLogger.close();
+        numberReporter.close();
         closeServerSocket();
-    }
-
-    private ServerSocket newServerSocket(int port) throws StartupException {
-        try {
-            return new ServerSocket(port);
-        } catch (IOException e) {
-            throw new StartupException(e);
-        }
-    }
-
-    private NumberLogger newNumberLogger(NumberReporter reporter) throws StartupException {
-        try {
-            return new NumberLogger(reporter);
-        } catch (NumberLoggerInitializationException e) {
-            throw new StartupException(e);
-        }
-    }
-
-    private NumberServerTerminator terminationFunction() {
-        return this::close;
     }
 
     private void closeServerSocket() {

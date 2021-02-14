@@ -3,6 +3,7 @@ package it.stebielli.numberserver.logger;
 
 import it.stebielli.numberserver.reporter.NumberReporter;
 
+import java.io.Closeable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -12,19 +13,31 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class NumberLogger {
+public class NumberLogger implements Closeable {
 
-    public static final String LOG_FILE = "numbers.log";
     private final PrintStream printStream;
     private final Set<Integer> indexedNumbers;
     private final Lock lock;
+    private final String logFile;
     private final NumberReporter reporter;
 
-    public NumberLogger(NumberReporter reporter) throws NumberLoggerInitializationException {
+    public NumberLogger(String logFile, NumberReporter reporter) throws NumberLoggerInitializationException {
+        this.logFile = logFile;
         this.reporter = reporter;
-        this.printStream = newPrintStream();
+
         this.indexedNumbers = new HashSet<>();
         this.lock = new ReentrantLock();
+
+        this.printStream = newPrintStream();
+    }
+
+    public void log(int number) {
+        synchronizedLog(number);
+    }
+
+    @Override
+    public void close() {
+        printStream.close();
     }
 
     private PrintStream newPrintStream() throws NumberLoggerInitializationException {
@@ -37,33 +50,38 @@ public class NumberLogger {
             Files.deleteIfExists(logFile());
             return Files.newOutputStream(logFile());
         } catch (Exception e) {
-            throw new NumberLoggerInitializationException("Error creating a new " + LOG_FILE, e);
+            throw new NumberLoggerInitializationException("Error creating a new " + logFile, e);
         }
     }
 
-    public void log(int number) {
+    private Path logFile() {
+        return Path.of(logFile);
+    }
+
+    private void synchronizedLog(int number) {
         lock.lock();
         try {
-            logNonIndexed(number);
+            doLog(number);
         } finally {
             lock.unlock();
         }
     }
 
-    private void logNonIndexed(int number) {
-        if (!indexedNumbers.contains(number)) {
-
-            printStream.println(number);
-            indexedNumbers.add(number);
-
+    private void doLog(int number) {
+        if (isNotIndexed(number)) {
+            logAndIndex(number);
             reporter.incrementUniques();
         } else {
             reporter.incrementDuplicates();
         }
     }
 
-    private Path logFile() {
-        return Path.of(LOG_FILE);
+    private boolean isNotIndexed(int number) {
+        return !indexedNumbers.contains(number);
     }
 
+    private void logAndIndex(int number) {
+        printStream.println(number);
+        indexedNumbers.add(number);
+    }
 }

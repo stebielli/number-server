@@ -1,6 +1,5 @@
 package it.stebielli.numberserver;
 
-import it.stebielli.numberserver.logger.NumberLogger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,18 +19,20 @@ class NumberServerTest {
     public static final int MAX_CONNECTIONS = 1;
     public static final String HOST = "localhost";
     public static final int PORT = 4000;
+    public static final int REPORT_PERIOD = 10;
+    public static final String LOG_FILE = "numbers.log";
 
     private NumberServer numberServer;
 
     @BeforeEach
     void setUp() {
-        numberServer = new NumberServer(PORT, MAX_CONNECTIONS);
+        numberServer = new NumberServer(PORT, MAX_CONNECTIONS, LOG_FILE, REPORT_PERIOD);
     }
 
     @AfterEach
     void tearDown() throws IOException {
         numberServer.close();
-        Files.deleteIfExists(Path.of(NumberLogger.LOG_FILE));
+        Files.deleteIfExists(Path.of(LOG_FILE));
     }
 
     @Test
@@ -67,7 +68,7 @@ class NumberServerTest {
     @Test
     void throwsAServerStartExceptionIfNotAbleToStart() throws StartupException {
         numberServer.start();
-        var serverThatFail = new NumberServer(PORT, MAX_CONNECTIONS);
+        var serverThatFail = new NumberServer(PORT, MAX_CONNECTIONS, LOG_FILE, REPORT_PERIOD);
         assertThatExceptionOfType(StartupException.class).isThrownBy(serverThatFail::start);
     }
 

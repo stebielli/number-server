@@ -12,7 +12,7 @@ public class NumberServerMain {
     }
 
     public void launch() {
-        var numberServer = new NumberServer(4000, 5);
+        var numberServer = new NumberServer(4000, 5, "numbers.log", 10_000);
         try {
             numberServer.start();
         } catch (StartupException e) {

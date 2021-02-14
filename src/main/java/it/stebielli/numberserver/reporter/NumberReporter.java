@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class NumberReporter implements Closeable {
 
+    private static final int NOW = 0;
+
     private final PrintStream printStream;
     private final int periodInMillis;
     private final AtomicInteger uniquesNumbers;
@@ -17,8 +19,8 @@ public class NumberReporter implements Closeable {
     private final AtomicInteger totalUniquesNumbers;
     private final ScheduledExecutorService service;
 
-    public NumberReporter(PrintStream printStream, int periodInMillis) {
-        this.printStream = printStream;
+    public NumberReporter(int periodInMillis) {
+        this.printStream = System.out;
         this.periodInMillis = periodInMillis;
         this.uniquesNumbers = new AtomicInteger(0);
         this.duplicatesNumbers = new AtomicInteger(0);
@@ -38,7 +40,7 @@ public class NumberReporter implements Closeable {
     }
 
     private void startSchedule() {
-        service.scheduleAtFixedRate(this::print, 0, periodInMillis, TimeUnit.MILLISECONDS);
+        service.scheduleAtFixedRate(this::print, NOW, periodInMillis, TimeUnit.MILLISECONDS);
     }
 
 

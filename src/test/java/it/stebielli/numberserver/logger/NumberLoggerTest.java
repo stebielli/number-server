@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verify;
 class NumberLoggerTest extends MockitoTest {
 
     public static final int NUMBER = 0;
+    public static final String LOG_FILE = "numbers.log";
 
     @Mock
     NumberReporter numberReporter;
@@ -43,14 +44,14 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     private Path numbersLog() {
-        return Path.of(NumberLogger.LOG_FILE);
+        return Path.of(LOG_FILE);
     }
 
     @Test
     void constructorCreatesNewLogFile() throws IOException, NumberLoggerInitializationException {
         Files.writeString(numbersLog(), "something");
 
-        new NumberLogger(numberReporter);
+        new NumberLogger(LOG_FILE, numberReporter);
 
         assertThat(Files.exists(numbersLog())).isTrue();
         assertThat(numbersLog().toFile().length()).isEqualTo(0);
@@ -58,7 +59,7 @@ class NumberLoggerTest extends MockitoTest {
 
     @Test
     void logNumber() throws IOException, NumberLoggerInitializationException {
-        var logger = new NumberLogger(numberReporter);
+        var logger = new NumberLogger(LOG_FILE, numberReporter);
 
         logger.log(NUMBER);
 
@@ -69,7 +70,7 @@ class NumberLoggerTest extends MockitoTest {
 
     @Test
     void loggedNumbersAreUnique() throws NumberLoggerInitializationException, IOException {
-        var logger = new NumberLogger(numberReporter);
+        var logger = new NumberLogger(LOG_FILE, numberReporter);
 
         logger.log(NUMBER);
         logger.log(NUMBER);
@@ -84,7 +85,7 @@ class NumberLoggerTest extends MockitoTest {
     void logSameNumbersFromSeparateThreads() throws NumberLoggerInitializationException, ExecutionException, InterruptedException, IOException {
         var numbers = randomHundredNumbers();
 
-        var logger = new NumberLogger(numberReporter);
+        var logger = new NumberLogger(LOG_FILE, numberReporter);
 
         var future0 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));
         var future1 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));
