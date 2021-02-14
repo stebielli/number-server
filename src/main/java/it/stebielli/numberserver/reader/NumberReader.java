@@ -2,12 +2,18 @@ package it.stebielli.numberserver.reader;
 
 import it.stebielli.numberserver.NumberServerTerminator;
 import it.stebielli.numberserver.logger.NumberLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
+import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 public class NumberReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumberLogger.class);
 
     public static final String TERMINATION_INPUT = "terminate";
     private static final Pattern LOG_INPUT = Pattern.compile("^[\\d]{9}$");
@@ -21,9 +27,16 @@ public class NumberReader {
     }
 
     public void read(InputStream stream) {
-        var scanner = new Scanner(stream);
-        while (scanner.hasNextLine()) {
-            var line = scanner.nextLine();
+        try (var reader = new BufferedReader(new InputStreamReader(stream))) {
+            doRead(reader);
+        } catch (IOException e) {
+            LOGGER.error("A problem occurred while reading", e);
+        }
+    }
+
+    private void doRead(BufferedReader reader) throws IOException {
+        String line;
+        while ((line = reader.readLine()) != null) {
 
             if (isLog(line)) {
                 numberLogger.log(Integer.parseInt(line));
