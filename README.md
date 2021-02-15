@@ -52,10 +52,15 @@ For example by typing on your terminal `telnet localhost 4000`.
 
 Once the client session is created, a number can be sent by simply typing it and press enter.
 There are few rules to follow by the way:
-* The number can be composed at most of 9 digits (e.g. `314159265` or `007007009`);
+* A number can be composed by at most 9 digits (e.g. `314159265` or `007007009`);
 * If a number is composed by less than 9 digits, it must include leading zeros till reach 9 digits;
 * Any invalid sent number will disconnect the client;
 * Typing `terminate` followed by enter will stop Number Server and disconnect all the clients.
+
+
+## Notes
+
+More design decisions and assumptions can be found [here](./NOTES.md).
 
 ---
 Now that you know everything enjoy the Number Server :)
