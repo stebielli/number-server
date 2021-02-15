@@ -10,42 +10,39 @@ import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static it.stebielli.numberserver.Arguments.*;
 import static org.assertj.core.api.Assertions.*;
 
-class NumberServerTest {
+public class NumberServerTest {
 
-    public static final int TIMEOUT = 10;
-    public static final int CLOSED = -1;
-    public static final int MAX_CONNECTIONS = 1;
-    public static final String HOST = "localhost";
-    public static final int PORT = 4000;
-    public static final int REPORT_PERIOD = 10;
-    public static final String LOG_FILE = "numbers.log";
+    private static final int TIMEOUT = 10;
+    private static final int CLOSED = -1;
+    private static final String HOST = "localhost";
 
     private NumberServer numberServer;
 
     @BeforeEach
-    void setUp() {
-        numberServer = new NumberServer(PORT, MAX_CONNECTIONS, LOG_FILE, REPORT_PERIOD);
+    public void setUp() {
+        numberServer = new NumberServer(DEFAULT_PORT, DEFAULT_MAX_CONNECTIONS, DEFAULT_LOG_FILE, DEFAULT_REPORT_PERIOD);
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    public void tearDown() throws IOException {
         numberServer.close();
-        Files.deleteIfExists(Path.of(LOG_FILE));
+        Files.deleteIfExists(Path.of(DEFAULT_LOG_FILE));
     }
 
     @Test
-    void applicationStart() throws StartupException, IOException {
+    public void applicationStart() throws StartupException, IOException {
         numberServer.start();
 
         assertIsConnected(newSocketClient());
     }
 
     @Test
-    void applicationAcceptAtMostMaxConnections() throws StartupException, IOException {
+    public void applicationAcceptAtMostMaxConnections() throws StartupException, IOException {
         numberServer.start();
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        for (int i = 0; i < DEFAULT_MAX_CONNECTIONS; i++) {
             assertIsConnected(newSocketClient());
         }
 
@@ -54,11 +51,11 @@ class NumberServerTest {
     }
 
     @Test
-    void openingAndClosingSocketWithMoreThenMaxConnections() throws StartupException, IOException {
+    public void openingAndClosingSocketWithMoreThenMaxConnections() throws StartupException, IOException {
         numberServer.start();
         // in this way the application never reach the limit
         // therefore has to accept all the connections
-        for (int i = 0; i < MAX_CONNECTIONS * 2; i++) {
+        for (int i = 0; i < DEFAULT_MAX_CONNECTIONS * 2; i++) {
             Socket s = newSocketClient();
             assertIsConnected(s);
             s.close();
@@ -66,9 +63,9 @@ class NumberServerTest {
     }
 
     @Test
-    void throwsAServerStartExceptionIfNotAbleToStart() throws StartupException {
+    public void throwsAServerStartExceptionIfNotAbleToStart() throws StartupException {
         numberServer.start();
-        var serverThatFail = new NumberServer(PORT, MAX_CONNECTIONS, LOG_FILE, REPORT_PERIOD);
+        var serverThatFail = new NumberServer(DEFAULT_PORT, DEFAULT_MAX_CONNECTIONS, DEFAULT_LOG_FILE, DEFAULT_REPORT_PERIOD);
         assertThatExceptionOfType(StartupException.class).isThrownBy(serverThatFail::start);
     }
 
@@ -85,7 +82,7 @@ class NumberServerTest {
     }
 
     private Socket newSocketClient() throws IOException {
-        Socket s = new Socket(HOST, PORT);
+        Socket s = new Socket(HOST, DEFAULT_PORT);
 
         // the timeout is set to test a successful connection during the read
         s.setSoTimeout(TIMEOUT);

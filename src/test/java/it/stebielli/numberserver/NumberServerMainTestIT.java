@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static it.stebielli.numberserver.NumberServerMain.*;
+import static it.stebielli.numberserver.Arguments.*;
 
 public class NumberServerMainTestIT {
 

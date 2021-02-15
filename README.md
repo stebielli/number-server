@@ -11,13 +11,13 @@ In order to run Number Server on your machine you need:
 
 ## Quick start
 
-The easiest way to run Number Server is typing from the project folder the command:
+The easiest way to start Number Server is typing from the project folder the command:
 ```
 mvn clean install exec:java
 ```
-It will start the application, create the file `numbers.log` and listen for 
-numbers to write in the file on port `4000`. The maximum number of connections is set to five, 
-but you can increase it as your needs.
+It will start the application, create the logging file (by default `numbers.log`) and listen the port (by default `4000`) for 
+numbers to write in the file; if the file already exists it will be cleared.
+The maximum number of connections is set to five by default.
 
 Periodically (by default 10 sec) the application prints on standard output a report 
 containing:

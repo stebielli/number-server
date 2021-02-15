@@ -9,10 +9,10 @@ import java.io.PrintStream;
 
 import static org.mockito.Mockito.*;
 
-class NumberReporterTest extends MockitoTest {
+public class NumberReporterTest extends MockitoTest {
 
     @Mock
-    PrintStream printStream;
+    private PrintStream printStream;
 
     @Override
     @BeforeEach
@@ -22,7 +22,7 @@ class NumberReporterTest extends MockitoTest {
     }
 
     @Test
-    void startAndCloseReporting() throws InterruptedException {
+    public void startAndCloseReporting() throws InterruptedException {
         var reporter = new NumberReporter(20);
 
         verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 0 duplicates. Unique total: 0");
@@ -34,7 +34,7 @@ class NumberReporterTest extends MockitoTest {
     }
 
     @Test
-    void reportUniqueNumber() {
+    public void reportUniqueNumber() {
         var reporter = new NumberReporter(20);
 
         reporter.incrementUniques();
@@ -46,7 +46,7 @@ class NumberReporterTest extends MockitoTest {
     }
 
     @Test
-    void reportDuplicatedNumber() {
+    public void reportDuplicatedNumber() {
         var reporter = new NumberReporter(20);
 
         reporter.incrementDuplicates();
@@ -58,7 +58,7 @@ class NumberReporterTest extends MockitoTest {
     }
 
     @Test
-    void resetReportPeriodically() throws InterruptedException {
+    public void resetReportPeriodically() throws InterruptedException {
         var reporter = new NumberReporter(20);
 
         reporter.incrementUniques();

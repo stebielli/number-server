@@ -1,5 +1,6 @@
 package it.stebielli.numberserver.logger;
 
+import it.stebielli.numberserver.Arguments;
 import it.stebielli.numberserver.MockitoTest;
 import it.stebielli.numberserver.reporter.NumberReporter;
 import org.junit.jupiter.api.AfterEach;
@@ -20,13 +21,12 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
-class NumberLoggerTest extends MockitoTest {
+public class NumberLoggerTest extends MockitoTest {
 
-    public static final int NUMBER = 0;
-    public static final String LOG_FILE = "numbers.log";
+    private static final int NUMBER = 0;
 
     @Mock
-    NumberReporter numberReporter;
+    private NumberReporter numberReporter;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -35,7 +35,7 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    public void tearDown() throws IOException {
         clearLogFile();
     }
 
@@ -44,14 +44,14 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     private Path numbersLog() {
-        return Path.of(LOG_FILE);
+        return Path.of(Arguments.DEFAULT_LOG_FILE);
     }
 
     @Test
-    void constructorCreatesNewLogFile() throws IOException, NumberLoggerInitializationException {
+    public void constructorCreatesNewLogFile() throws IOException, NumberLoggerInitializationException {
         Files.writeString(numbersLog(), "something");
 
-        var logger = new NumberLogger(LOG_FILE, numberReporter);
+        var logger = new NumberLogger(Arguments.DEFAULT_LOG_FILE, numberReporter);
 
         logger.close();
 
@@ -61,8 +61,8 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     @Test
-    void logNumber() throws IOException, NumberLoggerInitializationException {
-        var logger = new NumberLogger(LOG_FILE, numberReporter);
+    public void logNumber() throws IOException, NumberLoggerInitializationException {
+        var logger = new NumberLogger(Arguments.DEFAULT_LOG_FILE, numberReporter);
 
         logger.log(NUMBER);
         logger.flush();
@@ -75,8 +75,8 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     @Test
-    void loggedNumbersAreUnique() throws NumberLoggerInitializationException, IOException {
-        var logger = new NumberLogger(LOG_FILE, numberReporter);
+    public void loggedNumbersAreUnique() throws NumberLoggerInitializationException, IOException {
+        var logger = new NumberLogger(Arguments.DEFAULT_LOG_FILE, numberReporter);
 
         logger.log(NUMBER);
         logger.log(NUMBER);
@@ -91,10 +91,10 @@ class NumberLoggerTest extends MockitoTest {
     }
 
     @Test
-    void logSameNumbersFromSeparateThreads() throws NumberLoggerInitializationException, ExecutionException, InterruptedException, IOException {
+    public void logSameNumbersFromSeparateThreads() throws NumberLoggerInitializationException, ExecutionException, InterruptedException, IOException {
         var numbers = randomHundredNumbers();
 
-        var logger = new NumberLogger(LOG_FILE, numberReporter);
+        var logger = new NumberLogger(Arguments.DEFAULT_LOG_FILE, numberReporter);
 
         var future0 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));
         var future1 = Executors.newSingleThreadExecutor().submit(() -> numbers.forEach(logger::log));

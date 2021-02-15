@@ -10,9 +10,9 @@ import java.net.Socket;
 
 import static org.mockito.Mockito.*;
 
-class SocketServiceTest extends MockitoTest {
+public class SocketServiceTest extends MockitoTest {
 
-    public static final int TWICE = 2;
+    private static final int TWICE = 2;
 
     @Mock
     private ServerSocket serverSocket;
@@ -20,7 +20,7 @@ class SocketServiceTest extends MockitoTest {
     private SocketHandler socketHandler;
 
     @Test
-    void acceptedSocketsAreHandled() throws IOException {
+    public void acceptedSocketsAreHandled() throws IOException {
         var socket = mock(Socket.class);
         when(serverSocket.accept()).thenReturn(socket);
 
@@ -31,7 +31,7 @@ class SocketServiceTest extends MockitoTest {
     }
 
     @Test
-    void assertIOExceptionIsNotAStopper() throws IOException {
+    public void assertIOExceptionIsNotAStopper() throws IOException {
         var socket = mock(Socket.class);
         when(serverSocket.accept()).thenThrow(new IOException()).thenReturn(socket);
 
@@ -42,7 +42,7 @@ class SocketServiceTest extends MockitoTest {
     }
 
     @Test
-    void closeStopsAcceptingSocket() throws InterruptedException {
+    public void closeStopsAcceptingSocket() throws InterruptedException {
         var socketService = new SocketService(serverSocket, socketHandler);
 
         socketService.close();

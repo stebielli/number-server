@@ -11,19 +11,19 @@ import java.io.ByteArrayInputStream;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-class NumberReaderTest extends MockitoTest {
+public class NumberReaderTest extends MockitoTest {
 
-    public static final String ENTER = "\n";
-    public static final String VALID_INPUT = "000000000";
-    public static final String INVALID_INPUT = "invalid";
+    private static final String ENTER = "\n";
+    private static final String VALID_INPUT = "000000000";
+    private static final String INVALID_INPUT = "invalid";
 
     @Mock
-    NumberServerTerminator terminator;
+    private NumberServerTerminator terminator;
     @Mock
-    NumberLogger numberLogger;
+    private NumberLogger numberLogger;
 
     @Test
-    void validInputIsPassedToNumberLogger() {
+    public void validInputIsPassedToNumberLogger() {
         var stream = streamOf(VALID_INPUT + ENTER);
         var reader = new NumberReaderFactory(numberLogger, terminator).newReader();
 
@@ -34,7 +34,7 @@ class NumberReaderTest extends MockitoTest {
     }
 
     @Test
-    void invalidInputIsNotPassedToNumberLoggerAndStopReading() {
+    public void invalidInputIsNotPassedToNumberLoggerAndStopReading() {
         var stream = streamOf(INVALID_INPUT + ENTER + VALID_INPUT + ENTER);
 
         var reader = new NumberReaderFactory(numberLogger, terminator).newReader();
@@ -47,7 +47,7 @@ class NumberReaderTest extends MockitoTest {
     }
 
     @Test
-    void terminateInputCallsTermination() {
+    public void terminateInputCallsTermination() {
         var stream = streamOf(NumberReader.TERMINATION_INPUT + ENTER);
 
         var reader = new NumberReaderFactory(numberLogger, terminator).newReader();

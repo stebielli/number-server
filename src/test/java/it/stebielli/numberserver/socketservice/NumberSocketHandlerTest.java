@@ -13,16 +13,16 @@ import java.net.Socket;
 
 import static org.mockito.Mockito.*;
 
-class NumberSocketHandlerTest extends MockitoTest {
+public class NumberSocketHandlerTest extends MockitoTest {
 
     private static final int MAX_CONNECTIONS = 1;
 
     @Mock
-    NumberReaderFactory readerFactory;
+    private NumberReaderFactory readerFactory;
     @Mock
-    NumberReader reader;
+    private NumberReader reader;
     @Mock
-    InputStream stream;
+    private InputStream stream;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -41,7 +41,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     @Test
-    void socketInputPassedToReaderThenClose() throws IOException {
+    public void socketInputPassedToReaderThenClose() throws IOException {
         var socket = mockSocket();
         var handler = newNumberSocketHandler();
 
@@ -53,7 +53,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     @Test
-    void rejectSocketIfReachedMaxConnections() throws IOException {
+    public void rejectSocketIfReachedMaxConnections() throws IOException {
         var socket = mockSocket();
         var socketToReject = mockSocket();
         var handler = newNumberSocketHandler();
@@ -67,7 +67,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     @Test
-    void rejectSocketIfHandlerIsClosed() throws IOException {
+    public void rejectSocketIfHandlerIsClosed() throws IOException {
         var socket = mockSocket();
         var handler = newNumberSocketHandler();
 
@@ -79,7 +79,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     @Test
-    void closeClosesActiveSockets() throws IOException {
+    public void closeClosesActiveSockets() throws IOException {
         var socket = mockSocket();
         var handler = newNumberSocketHandler();
         readerIsReading();
@@ -92,7 +92,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     @Test
-    void verifyIOExceptionWhileClosingIsHandled() throws IOException {
+    public void verifyIOExceptionWhileClosingIsHandled() throws IOException {
         var socket = mockSocket();
         doThrow(new IOException()).when(socket).close();
 
