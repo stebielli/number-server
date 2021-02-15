@@ -64,6 +64,8 @@ class NumberReporterTest extends MockitoTest {
         reporter.incrementUniques();
         verify(printStream, timeout(TIMEOUT * 2)).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
 
+        Thread.sleep(TIMEOUT);
+
         reporter.incrementUniques();
         verify(printStream, timeout(TIMEOUT * 2)).println("Received 1 unique numbers, 0 duplicates. Unique total: 2");
 

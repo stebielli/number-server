@@ -116,7 +116,7 @@ class NumberSocketHandlerTest extends MockitoTest {
     }
 
     private void verifyIsClosed(Socket socket) throws IOException {
-        verify(socket, timeout(TIMEOUT)).close();
+        verify(socket, timeout(TIMEOUT).atLeastOnce()).close();
     }
 
     private void verifyIsRejected(Socket socketToReject) throws IOException {
