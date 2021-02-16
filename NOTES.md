@@ -2,8 +2,6 @@
 
 ## Architecture
 
-The Number Server application has been implemented by following the architecture sketched below:
-
 ![architecture](./architecture.png)
 
 There are five main component in the design:
@@ -43,3 +41,13 @@ code coverage of `87%`.
 * File is written using `java.io.FileWriter` because of its performance;
 * The number logged in the log file is the plain number without leading zeros because it is not directly 
   specified in the requirements.
+  
+## Future improvements
+The current architecture work just fine with a reduced and limited number of connection. On the other hand,
+it has a potential limit on the scalability if the number of connections increase a lot. 
+
+In fact, each reader is running on its own thread and could lead to memory limitations. It should be possible
+overcome this limitation by taking advantage of the non-blocking I/O provided by `java.nio.channels.ServerSocketChannel` 
+(instead of `java.net.ServerSocket`) and reading the channel stream with a single reader. 
+
+By the way, using a single reader could potentially reduce the throughput of the application.
