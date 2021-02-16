@@ -25,13 +25,13 @@ import static it.stebielli.numberserver.Arguments.*;
 public class NumberServerMainTestIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NumberServerMainTestIT.class);
-    public static final int REQUIREMENT_FOR_2M_NUMBERS = 10_000;
-    public static final int _2M_NUMBERS = 2_000_000;
+    private static final int REQUIREMENT_FOR_2M_NUMBERS = 10_000;
+    private static final int _2M_NUMBERS = 2_000_000;
 
     private NumberServerMain main;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         main = new NumberServerMain();
         main.launch(DEFAULT_PORT, DEFAULT_MAX_CONNECTIONS, DEFAULT_LOG_FILE, DEFAULT_REPORT_PERIOD);
         LOGGER.info("Started server with port: {}, maxConnections: {}, logFile: {}, reportPeriod: {}",
@@ -39,14 +39,14 @@ public class NumberServerMainTestIT {
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    public void tearDown() throws IOException {
         main.shutdown();
         Files.deleteIfExists(Path.of(DEFAULT_LOG_FILE));
         LOGGER.info("Server stopped");
     }
 
     @Test
-    void stressTestSingleSocket() throws IOException {
+    public void stressTestSingleSocket() throws IOException {
         var printStream = newSocketPrintStream();
 
         long start = System.currentTimeMillis();
@@ -60,7 +60,7 @@ public class NumberServerMainTestIT {
     }
 
     @Test
-    void stressTestMaxConcurrentSocketHighWithDuplicated() throws IOException, ExecutionException, InterruptedException {
+    public void stressTestMaxConcurrentSocketWithHighDuplication() throws IOException, ExecutionException, InterruptedException {
         List<PrintStream> printStreams = newPrintStreamsMaxConnections();
         var service = Executors.newFixedThreadPool(DEFAULT_MAX_CONNECTIONS);
 
@@ -76,7 +76,7 @@ public class NumberServerMainTestIT {
     }
 
     @Test
-    void stressTestMaxConcurrentSocketHighNoDuplicates() throws IOException, ExecutionException, InterruptedException {
+    public void stressTestMaxConcurrentSocketHighNoDuplication() throws IOException, ExecutionException, InterruptedException {
         List<PrintStream> printStreams = newPrintStreamsMaxConnections();
         var service = Executors.newFixedThreadPool(DEFAULT_MAX_CONNECTIONS);
 
