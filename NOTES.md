@@ -1,6 +1,6 @@
-#Notes
+# Notes
 
-##Architecture
+## Architecture
 
 The Number Server application has been implemented by following the architecture sketched below:
 
