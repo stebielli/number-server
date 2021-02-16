@@ -25,7 +25,7 @@ There are five main component in the design:
 Number server has been tested on a machine with Windows 10, intel core i5 8th gen and 16 GB of RAM. 
 The implementation proved to be able to handle more than 2M of numbers per 10 seconds.
 
-Test                            | Elapsed time (sec)    | Throughput (numbers/sec)
+Test                            | 2M of numbers (sec)    | Throughput (numbers/sec)
 --------------------------------|-----------------------|-------------------------
 1 socket client                 |1,87                   | 1,06 M
 5 socket clients all duplicates |4,60                   | 0,43 M
