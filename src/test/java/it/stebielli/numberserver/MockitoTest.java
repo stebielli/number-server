@@ -14,12 +14,6 @@ public class MockitoTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    protected void verifyNoAsyncInteraction(Object... mocks) throws InterruptedException {
-        // the interaction is async
-        Thread.sleep(TIMEOUT);
-        verifyNoInteractions(mocks);
-    }
-
     protected void verifyNoMoreAsyncInteraction(Object... mocks) throws InterruptedException {
         // the interaction is async
         Thread.sleep(TIMEOUT);

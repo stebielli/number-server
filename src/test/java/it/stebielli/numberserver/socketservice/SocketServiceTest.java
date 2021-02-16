@@ -47,7 +47,7 @@ public class SocketServiceTest extends MockitoTest {
 
         socketService.close();
 
-        verifyNoAsyncInteraction(serverSocket);
+        verifyNoMoreInteractions(serverSocket);
     }
 
 }
