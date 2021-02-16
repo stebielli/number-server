@@ -39,7 +39,7 @@ code coverage of `87%`.
 * The socket stream is read using a `java.io.BufferedReader` which proved better performance respect to
   `java.util.Scanner`;
 * File is written using `java.io.FileWriter` because of its performance;
-* The number logged in the log file is the plain number without leading zeros because it is not directly 
+* The numbers logged in the log file are plain numbers without leading zeros because it was not 
   specified in the requirements.
   
 ## Future improvements
