@@ -20,7 +20,7 @@ There are five main component in the design:
   
 ## Performance
 
-Number server has been tested on a machine with Windows 10, intel core i5 8th gen and 16 GB of RAM. 
+Number server has been tested on a Windows 10 laptop with 1.6 GHz intel i5 8th gen processor and 16 GB of RAM. 
 The implementation proved to be able to handle more than 2M of numbers per 10 seconds.
 
 Test                            | 2M of numbers (sec)    | Throughput (numbers/sec)
