@@ -2,6 +2,7 @@ package it.stebielli.numberserver.reporter;
 
 import it.stebielli.numberserver.MockitoTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -25,9 +26,6 @@ public class NumberReporterTest extends MockitoTest {
     public void startAndCloseReporting() throws InterruptedException {
         var reporter = new NumberReporter(20);
 
-        verify(printStream, timeout(TIMEOUT).atLeastOnce()).println("Received 0 unique numbers, 0 duplicates. Unique total: 0");
-        verify(printStream, timeout(TIMEOUT).atLeastOnce()).flush();
-
         reporter.close();
 
         verifyNoMoreAsyncInteraction(printStream);
@@ -39,7 +37,7 @@ public class NumberReporterTest extends MockitoTest {
 
         reporter.incrementUniques();
 
-        verify(printStream, timeout(TIMEOUT).atLeastOnce()).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
+        verify(printStream, timeout(TIMEOUT)).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
         verify(printStream, timeout(TIMEOUT).atLeastOnce()).flush();
 
         reporter.close();
@@ -51,7 +49,7 @@ public class NumberReporterTest extends MockitoTest {
 
         reporter.incrementDuplicates();
 
-        verify(printStream, timeout(TIMEOUT).atLeastOnce()).println("Received 0 unique numbers, 1 duplicates. Unique total: 0");
+        verify(printStream, timeout(TIMEOUT)).println("Received 0 unique numbers, 1 duplicates. Unique total: 0");
         verify(printStream, timeout(TIMEOUT).atLeastOnce()).flush();
 
         reporter.close();
@@ -62,12 +60,12 @@ public class NumberReporterTest extends MockitoTest {
         var reporter = new NumberReporter(20);
 
         reporter.incrementUniques();
-        verify(printStream, timeout(TIMEOUT * 2).atLeastOnce()).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
+        verify(printStream, timeout(TIMEOUT * 2)).println("Received 1 unique numbers, 0 duplicates. Unique total: 1");
 
         Thread.sleep(TIMEOUT);
 
         reporter.incrementUniques();
-        verify(printStream, timeout(TIMEOUT * 2).atLeastOnce()).println("Received 1 unique numbers, 0 duplicates. Unique total: 2");
+        verify(printStream, timeout(TIMEOUT * 2)).println("Received 1 unique numbers, 0 duplicates. Unique total: 2");
 
         reporter.close();
     }
